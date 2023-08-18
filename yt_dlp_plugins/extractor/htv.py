@@ -3,7 +3,7 @@ import re
 from yt_dlp.extractor.common import InfoExtractor
 
 class HanimeTVIE(InfoExtractor):
-    _VALID_URL = r'https?://(?:www\.)?hanime\.tv/videos/hentai/(?P<id>[a-z0-9\-]+)'
+    _VALID_URL = r'https?://(?:www\.)?hanime\.tv/(videos/hentai|hentai/video)/(?P<id>[a-z0-9\-]+)'
     _TESTS = [{
         'url': 'https://hanime.tv/videos/hentai/itadaki-seieki',
         'md5': '68a3fbb672229cecd12b52528168e6ff',
