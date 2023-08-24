@@ -68,8 +68,11 @@ command should be run to make the script executable.
 
     ```
     $ ./htv-search.py -t harem -t 'big boobs' -t x-ray -t uncensored
-    Soukan Yuugi 1: https://hanime.tv/hentai/video/soukan-yuugi-1
-    It's a Family Affair 2: https://hanime.tv/hentai/video/it-s-a-family-affair-2
+    Shoujo-tachi no Sadism 2: https://hanime.tv/hentai/video/shoujo-tachi-no-sadism-2
+    Shoujo-tachi no Sadism 1: https://hanime.tv/hentai/video/shoujo-tachi-no-sadism
+    Ikenai Koto The Animation 1: https://hanime.tv/hentai/video/ikenai-koto-the-animation-1
+    Yubisaki Annainin 2: https://hanime.tv/hentai/video/yubisaki-annainin-2
+    Yubisaki Annainin 1: https://hanime.tv/hentai/video/yubisaki-annainin-1
     ---
-    Page 1 of 1, Results 2
+    Page 1 of 1, Results 5
     ```
