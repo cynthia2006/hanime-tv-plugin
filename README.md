@@ -19,6 +19,12 @@ python3 -m pip install -U https://github.com/lroy1998/hanime-tv-plugin/archive/m
 
 See [installing yt-dlp plugins](https://github.com/yt-dlp/yt-dlp#installing-plugins) for the other methods this plugin package can be installed.
 
+## Features
+
+- **Video downloads** upto 720p (1080p requires _premium membership_). If you need 1080p versions, you can go checkout hentaistream.moe (they also offer 4k for paid). They offer objectively better quality encodes than hanime.tv, and their videos aren't hard subtitled. However, their collection is much smaller compared to hanime.tv. A few videos were taken down off of hanime.tv, you might find them here.
+  
+- **Playlist downloads** (public & unlisted without cookies.txt). If you need to download private playlists, you have to extract cookies off hanime.tv while still being logged in. Use [this](https://chrome.google.com/webstore/detail/get-cookiestxt-locally/cclelndahbckbenkjhflpdbgdldlbecc) extension and download the `cookies.txt` in the current working directory.
+
 ## Search
 
 This plugin does not have the searching functionality as was in the original rxqv repository. However, xsbee had also made a [search script](https://github.com/xsbee/yt-dlp/releases/download/htv/htv-search.py), which can be used separately from this plugin to search without the web interface.
@@ -44,7 +50,7 @@ options:
 
 Total pages and result count will be displayed
 ```
----
+
 ```
 $ chmod +x htv-search.py
 ```
