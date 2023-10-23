@@ -6,7 +6,7 @@ This extractor was first founded by [rxqv](https://github.com/rxqv/htv), as a se
 
 xsbee, who also made an [issue](https://github.com/yt-dlp/yt-dlp/issues/4007) on yt-dlp repo, took on the apparently stale rxqv repo, converting it into a yt-dlp extractor.
 
-This repository takes the extractor code and makes it a plugin, which makes maintainence rather easier.
+This repository takes the extractor code and makes it a plugin, which makes maintainence rather easier. And does a few more additions.
 
 ## Installation
 
