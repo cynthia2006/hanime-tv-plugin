@@ -1,6 +1,7 @@
 import re
 
 from yt_dlp.extractor.common import InfoExtractor
+from yt_dlp.utils import traverse_obj, int_or_none, urljoin
 
 class HanimeTVIE(InfoExtractor):
     _VALID_URL = r'https?://(?:www\.)?hanime\.tv/(videos/hentai|hentai/video)/(?P<id>[a-z0-9\-]+)'
@@ -69,3 +70,45 @@ class HanimeTVIE(InfoExtractor):
             'formats': formats,
             'ext': 'mp4',
         }
+
+class HanimeTVPlaylistIE(InfoExtractor):
+    _VALID_URL = r"https?://(?:www\.)?hanime\.tv/playlists/(?P<id>[a-z0-9\-]+)"
+    _TESTS = []
+
+    def _real_extract(self, url):
+        playlist_id = self._match_id(url)
+        offset = 0
+        entries = []
+
+        while True:
+            page = self._download_json('https://hanime.tv/api/v8/playlist_hentai_videos', None, headers={
+                'X-Signature-Version': 'web2'
+            }, query={
+                'playlist_id': playlist_id,
+                # NOTE possible extractor arg
+                '__order': 'sequence,DESC',
+                '__offset': offset,
+                '__count': 24
+            })
+
+            meta = traverse_obj(page, ('fapi', 'meta'), default={}, expected_type=dict)
+            data = traverse_obj(page, ('fapi', 'data'), default=[], expected_type=list)
+
+            for video in data:
+                entries.append(self.url_result(
+                    urljoin('https://hanime.tv/videos/hentai/', video.get('slug')),
+                    video_id=video.get('id'),
+                    video_title=video.get('name'),
+                    ie_key=HanimeTVIE.ie_key(),
+                ))
+
+            count = int_or_none(meta.get('count'))
+            offset = int_or_none(meta.get('offset'))
+            total = int_or_none(meta.get('total'))
+
+            left = total - (offset + count)
+            if left < 1:
+                break
+            offset += count
+
+        return self.playlist_result(entries, playlist_id)
