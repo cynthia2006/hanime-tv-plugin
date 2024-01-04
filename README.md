@@ -21,9 +21,11 @@ See [installing yt-dlp plugins](https://github.com/yt-dlp/yt-dlp#installing-plug
 
 ## Features
 
-- **Video downloads** upto 720p (1080p requires _premium membership_). If you need 1080p versions, you can go checkout hentaistream.moe (they also offer 4k for paid). They offer objectively better quality encodes than hanime.tv, and their videos aren't hard subtitled. However, their collection is much smaller compared to hanime.tv. A few videos were taken down off of hanime.tv, you might find them here.
+- **Video downloads** upto 720p (1080p requires _premium membership_).
   
 - **Playlist downloads** (public & unlisted without cookies.txt). If you need to download private playlists, you have to extract cookies off hanime.tv while still being logged in. Use [this](https://chrome.google.com/webstore/detail/get-cookiestxt-locally/cclelndahbckbenkjhflpdbgdldlbecc) extension and download the `cookies.txt` in the current working directory.
+
+- **Franchise downloads**. To download all videos in a franchise `--extractor-args "hanimetv:franchise=1"` must be passed to yt-dlp commandline. A franchise is collection of OVAs (or simply, episodes) in a certain Hentai OVA series.
 
 ## Search
 
