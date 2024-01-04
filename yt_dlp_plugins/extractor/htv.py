@@ -1,7 +1,7 @@
 import re
 
 from yt_dlp.extractor.common import InfoExtractor
-from yt_dlp.utils import traverse_obj, str_or_none, int_or_none, url_or_none, urljoin, clean_html
+from yt_dlp.utils import traverse_obj, str_or_none, bool_or_none, int_or_none, url_or_none, urljoin, clean_html
 
 class HanimeTVIE(InfoExtractor):
     _VALID_URL = r'https?://(?:www\.)?hanime\.tv/(videos/hentai|hentai/video)/(?P<id>[a-z0-9\-]+)'
@@ -30,46 +30,63 @@ class HanimeTVIE(InfoExtractor):
 
     def _real_extract(self, url):
         video_id = self._match_id(url)
+        entries = []
+        
+        def video_result(page):
+            formats = []
+
+            video = traverse_obj(page, ('hentai_video'), default={}, expected_type=dict)
+            description = clean_html(video.get('description'))
+            servers = traverse_obj(page, ('videos_manifest', 'servers'), default=[], expected_type=list)
+            
+            for server in servers:
+                for streams in server.get('streams', []):
+                    # TODO notify yt-dlp of premium streams
+                    if streams.get('kind') == 'premium_alert':
+                        continue
+
+                    formats.append({
+                        'url': url_or_none(streams.get('url')),
+                        'ext': 'mp4',
+                        'format_id': str_or_none(streams.get('id')),
+                        'width': int_or_none(streams.get('width')),
+                        'height': int_or_none(streams.get('height')),
+                        'filesize_approx': int_or_none(streams['filesize_mbs'], invscale=1000000)
+                    })
+
+            return {
+                'id': video.get('slug'),
+                'title': video.get('name'),
+                'creator': video.get('brand'),
+                'duration': int_or_none(video.get('duration_in_ms'), scale=1000),
+                'timestamp': int_or_none(video.get('created_at_unix')),
+                'release_timestamp': int_or_none(video.get('released_at_unix')),
+                'description': description,
+                'view_count': int_or_none(video.get('views')),
+                'like_count': int_or_none(video.get('likes')),
+                'tags': [tag.get('text') for tag in video.get('hentai_tags', [])],
+                'dislike_count': int_or_none(video.get('dislikes')),
+                'thumbnail': url_or_none(video.get('poster_url')),
+                'series': traverse_obj(page, ('hentai_franchise', 'title'), expected_type=str),
+                'formats': formats,
+                'ext': 'mp4',
+            }
+        
         page = self._download_json('https://hanime.tv/api/v8/video', None, query={'id': video_id})
+        franchise = traverse_obj(page, ('hentai_franchise'), default={}, expected_type=dict)
+        franchise_videos = traverse_obj(page, ('hentai_franchise_hentai_videos'), default=[], expected_type=list)
+        
+        entries.append(video_result(page))
 
-        video = traverse_obj(page, ('hentai_video'), default={}, expected_type=dict)
-        description = clean_html(video.get('description'))
-        servers = traverse_obj(page, ('videos_manifest', 'servers'), default=[], expected_type=list)
+        is_franchise = self._configuration_arg('franchise', [False], ie_key=HanimeTVIE.ie_key())[0]
+        if is_franchise:
+            for entry in franchise_videos[1:]:
+                page = self._download_json('https://hanime.tv/api/v8/video', None, query={'id': str_or_none(entry.get('slug'))})
 
-        formats = []
+                entries.append(video_result(page))
 
-        for server in servers:
-            for streams in server.get('streams', []):
-                # Premium streams are to be ignored
-                if streams.get('kind') == 'premium_alert':
-                    continue
+        return self.playlist_result(entries, playlist_title=str_or_none(franchise.get('title')), multi_video=True)
 
-                formats.append({
-                    'url': url_or_none(streams.get('url')),
-                    'ext': 'mp4',
-                    'format_id': str_or_none(streams.get('id')),
-                    'width': int_or_none(streams.get('width')),
-                    'height': int_or_none(streams.get('height')),
-                    'filesize_approx': int_or_none(streams['filesize_mbs'], invscale=1000000)
-                })
-
-        return {
-            'id': video.get('slug'),
-            'title': video.get('name'),
-            'creator': video.get('brand'),
-            'duration': int_or_none(video.get('duration_in_ms'), scale=1000),
-            'timestamp': int_or_none(video.get('created_at_unix')),
-            'release_timestamp': int_or_none(video.get('released_at_unix')),
-            'description': description,
-            'view_count': int_or_none(video.get('views')),
-            'like_count': int_or_none(video.get('likes')),
-            'tags': [tag.get('text') for tag in video.get('hentai_tags', [])],
-            'dislike_count': int_or_none(video.get('dislikes')),
-            'thumbnail': url_or_none(video.get('poster_url')),
-            'series': traverse_obj(page, ('hentai_franchise', 'title'), expected_type=str),
-            'formats': formats,
-            'ext': 'mp4',
-        }
 
 class HanimeTVPlaylistIE(InfoExtractor):
     _VALID_URL = r"https?://(?:www\.)?hanime\.tv/playlists/(?P<id>[a-z0-9\-]+)"
@@ -78,6 +95,8 @@ class HanimeTVPlaylistIE(InfoExtractor):
     def _real_extract(self, url):
         playlist_id = self._match_id(url)
         offset = 0
+
+        # TODO use PagedList instead of loading it all at once
         entries = []
 
         while True:
@@ -85,7 +104,7 @@ class HanimeTVPlaylistIE(InfoExtractor):
                 'X-Signature-Version': 'web2'
             }, query={
                 'playlist_id': playlist_id,
-                # NOTE possible extractor arg
+                # TODO possible extractor arg
                 '__order': 'sequence,DESC',
                 '__offset': offset,
                 '__count': 24
@@ -111,4 +130,5 @@ class HanimeTVPlaylistIE(InfoExtractor):
                 break
             offset += count
 
+        # TODO where is the playlist title?
         return self.playlist_result(entries, playlist_id)
