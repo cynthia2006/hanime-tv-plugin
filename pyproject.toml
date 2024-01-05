@@ -4,3 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [tool.distutils.bdist_wheel]
 universal = true
+
+[project]
+name = "hanime-tv-plugin"
+version = "2024.01.05"
+
+[project.scripts]
+htv-search = "htv_search:htv_search"
