@@ -31,7 +31,7 @@ See [installing yt-dlp plugins](https://github.com/yt-dlp/yt-dlp#installing-plug
 
 - To download a single video
   ```
-  yt-dlp "https://hanime.tv/hentai/video/kowaremono-the-animation"
+  yt-dlp "https://hanime.tv/hentai/video/green-eyes-ane-kyun-yori-1"
   ```
 
 - To download a playlist
@@ -41,9 +41,8 @@ See [installing yt-dlp plugins](https://github.com/yt-dlp/yt-dlp#installing-plug
 
 - To download all the videos in a franchise
   ```
-  yt-dlp --extractor-args "hanimetv:franchise=1" "https://hanime.tv/hentai/video/green-eyes-ane-kyun-yori-1"
+  yt-dlp --extractor-args "hanimetv:franchise=1" "https://hanime.tv/hentai/video/resort-boin-uncensored-re-release-1"
   ```
-
 
 ## Search
 
