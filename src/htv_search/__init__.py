@@ -17,7 +17,8 @@ def htv_search():
         'release_date': 'released_at_unix'
     }
 
-    parser.add_argument('-q', '--query',
+    parser.add_argument('QUERY',
+                        nargs='?',
                         default='',
                         help='text to search with')
 
@@ -69,7 +70,7 @@ def htv_search():
         'ordering': 'asc' if args.ascending else 'desc',
         'tags_mode': 'OR' if args.broad_search else 'AND',
         'page': args.page - 1,
-        'search_text': args.query
+        'search_text': args.QUERY
     }
 
     r = requests.post('https://search.htv-services.com/', json=req)

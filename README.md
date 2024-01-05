@@ -75,7 +75,7 @@ A few usecases include the following.
 - Simple text query
 
     ```
-    $ htv-search -q "kanojo x kanojo x kanojo"
+    $ htv-search "kanojo x kanojo x kanojo"
     Kanojo x Kanojo x Kanojo 3: https://hanime.tv/hentai/video/kanojo-x-kanojo-x-kanojo-3
     Kanojo x Kanojo x Kanojo 2: https://hanime.tv/hentai/video/kanojo-x-kanojo-x-kanojo-2
     Kanojo x Kanojo x Kanojo 1: https://hanime.tv/hentai/video/kanojo-x-kanojo-x-kanojo-1
