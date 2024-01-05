@@ -27,13 +27,31 @@ See [installing yt-dlp plugins](https://github.com/yt-dlp/yt-dlp#installing-plug
 
 - **Franchise downloads**. To download all videos in a franchise `--extractor-args "hanimetv:franchise=1"` must be passed to yt-dlp commandline. A franchise is collection of OVAs (or simply, episodes) in a certain Hentai OVA series.
 
+## Examples
+
+- To download a single video
+  ```
+  yt-dlp "https://hanime.tv/hentai/video/kowaremono-the-animation"
+  ```
+
+- To download a playlist
+  ```
+  yt-dlp "https://hanime.tv/playlists/liked-videos-bsqnpuefi9la"
+  ```
+
+- To download all the videos in a franchise
+  ```
+  yt-dlp --extractor-args "hanimetv:franchise=1" "https://hanime.tv/hentai/video/green-eyes-ane-kyun-yori-1"
+  ```
+
+
 ## Search
 
-This plugin does not have the searching functionality as was in the original rxqv repository. However, xsbee had also made a [search script](https://github.com/xsbee/yt-dlp/releases/download/htv/htv-search.py), which can be used separately from this plugin to search without the web interface.
-
+xsbee had also made a [search script](https://github.com/xsbee/yt-dlp/releases/download/htv/htv-search.py) to search without the web interface. It is included in the plugin package, and can be invoked through `htv-search`.
 
 ```
-usage: htv-search.py [-h] [-q QUERY] [-b BRAND] [-t TAG] [-T TAG] [-o {title,views,likes,upload_date,release_date}] [-p PAGE] [--ascending] [--broad-search] [--verbose]
+usage: htv-search [-h] [-q QUERY] [-b BRAND] [-t TAG] [-T TAG] [-o {title,views,likes,upload_date,release_date}] [-p PAGE]
+                  [--ascending] [--broad-search] [--verbose]
 
 options:
   -h, --help            show this help message and exit
@@ -53,18 +71,12 @@ options:
 Total pages and result count will be displayed
 ```
 
-```
-$ chmod +x htv-search.py
-```
-
-command should be run to make the script executable.
-
-### Examples
+A few usecases include the following.
 
 - Simple text query
 
     ```
-    $ ./htv-search.py -q "kanojo x kanojo x kanojo"
+    $ htv-search -q "kanojo x kanojo x kanojo"
     Kanojo x Kanojo x Kanojo 3: https://hanime.tv/hentai/video/kanojo-x-kanojo-x-kanojo-3
     Kanojo x Kanojo x Kanojo 2: https://hanime.tv/hentai/video/kanojo-x-kanojo-x-kanojo-2
     Kanojo x Kanojo x Kanojo 1: https://hanime.tv/hentai/video/kanojo-x-kanojo-x-kanojo-1
@@ -75,7 +87,7 @@ command should be run to make the script executable.
 - With multiple tags
 
     ```
-    $ ./htv-search.py -t harem -t 'big boobs' -t x-ray -t uncensored
+    $ htv-search -t harem -t 'big boobs' -t x-ray -t uncensored -T 'ugly bastard'
     Shoujo-tachi no Sadism 2: https://hanime.tv/hentai/video/shoujo-tachi-no-sadism-2
     Shoujo-tachi no Sadism 1: https://hanime.tv/hentai/video/shoujo-tachi-no-sadism
     Ikenai Koto The Animation 1: https://hanime.tv/hentai/video/ikenai-koto-the-animation-1
