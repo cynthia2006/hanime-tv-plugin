@@ -51,7 +51,7 @@ class HanimeTVIE(InfoExtractor):
                         'format_id': str_or_none(streams.get('id')),
                         'width': int_or_none(streams.get('width')),
                         'height': int_or_none(streams.get('height')),
-                        'filesize_approx': int_or_none(streams['filesize_mbs'], invscale=1000000)
+                        'filesize_approx': int_or_none(streams.get('filesize_mbs'), invscale=1000000)
                     })
 
             return {
