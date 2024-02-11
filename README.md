@@ -1,4 +1,6 @@
-This yt-dlp plugin adds support for the hanime.tv extractor. 
+This yt-dlp plugin adds support for the hanime.tv extractor.
+
+[![Python package](https://github.com/lroy1998/hanime-tv-plugin/actions/workflows/python-package.yml/badge.svg)](https://github.com/lroy1998/hanime-tv-plugin/actions/workflows/python-package.yml)
 
 ## History
 
