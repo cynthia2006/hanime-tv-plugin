@@ -16,7 +16,7 @@ Requires yt-dlp `2023.07.06` or above.
 
 You can install this package with pip:
 ```
-python3 -m pip install -U https://github.com/lroy1998/hanime-tv-plugin/archive/master.zip
+python3 -m pip install -U https://github.com/cynthia2006/hanime-tv-plugin/archive/master.zip
 ```
 
 See [installing yt-dlp plugins](https://github.com/yt-dlp/yt-dlp#installing-plugins) for the other methods this plugin package can be installed.
