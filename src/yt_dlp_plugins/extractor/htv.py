@@ -85,7 +85,7 @@ class HanimeTVIE(InfoExtractor):
 
                 entries.append(video_result(page))
 
-        return self.playlist_result(entries, playlist_title=str_or_none(franchise.get('title')), multi_video=True)
+        return self.playlist_result(entries, playlist_title=str_or_none(franchise.get('title')))
 
 
 class HanimeTVPlaylistIE(InfoExtractor):
