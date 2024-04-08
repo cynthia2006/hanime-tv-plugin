@@ -7,7 +7,7 @@ universal = true
 
 [project]
 name = "hanime-tv-plugin"
-version = "2024.04.07"
+version = "2024.04.08"
 
 [project.scripts]
 htv-search = "htv_search:htv_search"

@@ -1,7 +1,7 @@
 import re
 
 from yt_dlp.extractor.common import InfoExtractor
-from yt_dlp.utils import traverse_obj, str_or_none, bool_or_none, int_or_none, url_or_none, urljoin, clean_html
+from yt_dlp.utils import traverse_obj, str_or_none, bool_or_none, int_or_none, url_or_none, urljoin, clean_html, OnDemandPagedList
 
 class HanimeTVIE(InfoExtractor):
     _VALID_URL = r'https?://(?:www\.)?hanime\.tv/(videos/hentai|hentai/video)/(?P<id>[a-z0-9\-]+)'
@@ -94,41 +94,28 @@ class HanimeTVPlaylistIE(InfoExtractor):
 
     def _real_extract(self, url):
         playlist_id = self._match_id(url)
-        offset = 0
 
-        # TODO use PagedList instead of loading it all at once
-        entries = []
+        num_page_ents = int_or_none(self._configuration_arg('num_page_ents', ie_key=HanimeTVIE.ie_key()), default=24)
 
-        while True:
+        def fetch_page(pagenum):
             page = self._download_json('https://hanime.tv/api/v8/playlist_hentai_videos', None, headers={
                 'X-Signature-Version': 'web2'
             }, query={
                 'playlist_id': playlist_id,
                 # TODO possible extractor arg
                 '__order': 'sequence,DESC',
-                '__offset': offset,
-                '__count': 24
+                '__offset': pagenum*num_page_ents,
+                '__count': num_page_ents
             })
 
-            meta = traverse_obj(page, ('fapi', 'meta'), default={}, expected_type=dict)
             data = traverse_obj(page, ('fapi', 'data'), default=[], expected_type=list)
 
-            for video in data:
-                entries.append(self.url_result(
-                    urljoin('https://hanime.tv/videos/hentai/', video.get('slug')),
-                    video_id=video.get('id'),
-                    video_title=video.get('name'),
-                    ie_key=HanimeTVIE.ie_key(),
-                ))
-
-            count = int_or_none(meta.get('count'))
-            offset = int_or_none(meta.get('offset'))
-            total = int_or_none(meta.get('total'))
-
-            left = total - (offset + count)
-            if left < 1:
-                break
-            offset += count
+            return [self.url_result(
+                        urljoin('https://hanime.tv/videos/hentai/', entry.get('slug')),
+                        video_id=entry.get('id'),
+                        video_title=entry.get('name'),
+                        ie_key=HanimeTVIE.ie_key())
+                    for entry in data]
 
         # TODO where is the playlist title?
-        return self.playlist_result(entries, playlist_id)
+        return self.playlist_result(OnDemandPagedList(fetch_page, num_page_ents), playlist_id)
