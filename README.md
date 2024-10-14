@@ -1,6 +1,8 @@
 This yt-dlp plugin adds support for the hanime.tv extractor.
 
 [![Python package](https://github.com/lroy1998/hanime-tv-plugin/actions/workflows/python-package.yml/badge.svg)](https://github.com/lroy1998/hanime-tv-plugin/actions/workflows/python-package.yml)
+[![PyPI version](https://badge.fury.io/py/hanime-tv-plugin.svg)](https://badge.fury.io/py/hanime-tv-plugin)
+
 
 ## History
 
@@ -16,7 +18,12 @@ Requires yt-dlp `2023.07.06` or above.
 
 You can install this package with pip:
 ```
-python3 -m pip install -U https://github.com/cynthia2006/hanime-tv-plugin/archive/master.zip
+python3 -m pip install hanime-tv-plugin
+```
+
+Or, with pipx:
+```
+pipx install hanime-tv-plugin
 ```
 
 See [installing yt-dlp plugins](https://github.com/yt-dlp/yt-dlp#installing-plugins) for the other methods this plugin package can be installed.
