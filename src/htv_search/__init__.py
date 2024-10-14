@@ -40,7 +40,6 @@ def htv_search():
 
     parser.add_argument('-o', '--order',
                         choices=['title', 'views', 'likes', 'upload_date', 'release_date'],
-                        type=lambda o: real_order[o],
                         help="property to sort results by")
 
     parser.add_argument('-p', '--page',
@@ -66,7 +65,7 @@ def htv_search():
         'blacklist': args.no_tag,
         'brands': args.brand,
         'tags': args.tag,
-        'order_by': args.order,
+        'order_by': real_order.get(args.order),
         'ordering': 'asc' if args.ascending else 'desc',
         'tags_mode': 'OR' if args.broad_search else 'AND',
         'page': args.page - 1,

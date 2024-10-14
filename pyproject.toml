@@ -1,13 +1,21 @@
-[build-system]
-requires = ["setuptools"]
-build-backend = "setuptools.build_meta"
-
-[tool.distutils.bdist_wheel]
-universal = true
-
-[project]
+[tool.poetry]
 name = "hanime-tv-plugin"
 version = "2024.04.08"
+description = "hanime.tv extractor plugin for yt-dlp"
+authors = ["Cynthia <cynthia2048@proton.me>"]
+readme = "README.md"
+packages = [
+  { include = "htv_search", from = "src" },
+  { include = "yt_dlp_plugins/extractor", from = "src" }
+]
 
-[project.scripts]
+[tool.poetry.dependencies]
+python = "^3.12"
+requests = "^2.32.3"
+
+[tool.poetry.scripts]
 htv-search = "htv_search:htv_search"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
