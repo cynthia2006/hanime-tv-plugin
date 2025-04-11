@@ -10,7 +10,7 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.13"
 requests = "^2.32.3"
 
 [tool.poetry.scripts]
