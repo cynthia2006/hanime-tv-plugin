@@ -1,7 +1,16 @@
-import re
+import urllib.parse
 
 from yt_dlp.extractor.common import InfoExtractor
-from yt_dlp.utils import traverse_obj, str_or_none, bool_or_none, int_or_none, url_or_none, urljoin, clean_html, OnDemandPagedList
+from yt_dlp.networking import Request
+from yt_dlp.utils import (
+    traverse_obj,
+    str_or_none,
+    int_or_none,
+    url_or_none,
+    urljoin,
+    base_url,
+    OnDemandPagedList
+)
 
 class HanimeTVIE(InfoExtractor):
     _VALID_URL = r'https?://(?:www\.)?hanime\.tv/(videos/hentai|hentai/video)/(?P<id>[a-z0-9\-]+)(?:\?playlist_id=(?P<lid>[a-z]+))?'
@@ -18,33 +27,22 @@ class HanimeTVIE(InfoExtractor):
         page = self._download_json('https://h.freeanimehentai.net/api/v8/video', video_id, query={'id': video_id})
         formats = []
 
-        video = traverse_obj(page, ('hentai_video'), default={}, expected_type=dict)
-        description = clean_html(video.get('description'))
-        servers = traverse_obj(page, ('videos_manifest', 'servers'), default=[], expected_type=list)
+        video = page['hentai_video']
+        servers = page['videos_manifest']['servers']
 
         for server in servers:
-            for streams in server.get('streams', []):
+            for stream in server['streams']:
                 # For now, premium streams can not be downloaded; neither is practical.
-                if not streams.get('is_guest_allowed'):
+                if not stream.get('is_guest_allowed'):
                     continue
 
-                # FIXME The M3U manifest may contain broken links to segments. Interestingly though,
-                # the domain names, appearing in the URLs of media segments, seem to be alternate
-                # domains to access the same resource. For example, say 'leviathan-25x-05.top' can't
-                # be accessed for some reason, and an alternate domain 'leviathan-25x-06.top' exists,
-                # the same resource can be accessed from there as well. This is an issue with that
-                # website, not with our extractor.
-                #
-                # NOTE: We assume that stream kind is always 'hls', but it might change as well.
                 formats.append({
-                    'url': url_or_none(streams.get('url')),
+                    'url': stream['url'],
                     'ext': 'mp4',
-                    'vcodec': 'h264',
-                    'acodec': 'aac',
-                    'format_id': str_or_none(streams.get('id')),
-                    'width': int_or_none(streams.get('width')),
-                    'height': int_or_none(streams.get('height')),
-                    'filesize_approx': int_or_none(streams.get('filesize_mbs'), invscale=1000000)
+                    'format_id': str_or_none(stream['id']),
+                    'width': int_or_none(stream.get('width')),
+                    'height': int_or_none(stream.get('height')),
+                    'filesize_approx': int_or_none(stream.get('filesize_mbs'), invscale=1000000),
                 })
 
         return {
@@ -52,15 +50,8 @@ class HanimeTVIE(InfoExtractor):
             'title': video.get('name'),
             'creator': video.get('brand'),
             'duration': int_or_none(video.get('duration_in_ms'), scale=1000),
-            'timestamp': int_or_none(video.get('created_at_unix')),
-            'release_timestamp': int_or_none(video.get('released_at_unix')),
-            'description': description,
-            'view_count': int_or_none(video.get('views')),
-            'like_count': int_or_none(video.get('likes')),
-            'tags': [tag.get('text') for tag in video.get('hentai_tags', [])],
-            'dislike_count': int_or_none(video.get('dislikes')),
+            'timestamp': int_or_none(video.get('released_at_unix')),
             'thumbnail': url_or_none(video.get('poster_url')),
-            'series': traverse_obj(page, ('hentai_franchise', 'title'), expected_type=str),
             'formats': formats,
             'ext': 'mp4',
         }

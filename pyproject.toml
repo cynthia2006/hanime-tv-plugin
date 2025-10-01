@@ -1,26 +1,15 @@
 [project]
-name = "hanime-tv-plugin"
-version = "2025.06.06"
-description = "hanime.tv extractor plugin for yt-dlp"
+name = "hanime-plugin"
+version = "2025.10.01"
+description = "hanime extractor plugin for yt-dlp"
 authors = [
   { name = "Cynthia", email = "cynthia2048@proton.me" }
 ]
 readme = "README.md"
 requires-python = ">=3.9"
-dependencies = [
-  "m3u8 (>=6.0.0,<7.0.0)"
-]
 
 [tool.poetry]
-packages = [
-  { include = "yt_dlp_plugins" },
-  { include = "htv_search.py" },
-  { include = "htv_patch_m3u8.py" }
-]
-
-[project.scripts]
-htv-search = "htv_search:main"
-htv-patch-m3u8 = "htv_patch_m3u8:main"
+packages = [{ include = "yt_dlp_plugins" }]
 
 [build-system]
 requires = ["poetry-core"]
