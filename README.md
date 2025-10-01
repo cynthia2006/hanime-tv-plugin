@@ -2,8 +2,8 @@
 
 This yt-dlp plugin adds support for numerous hentai websites, including but not limited to **hanime.tv**, **hstream.moe** and **HentaiHaven**.
 
-[![Python package](https://github.com/cynthia2006/hanime-tv-plugin/actions/workflows/python-package.yml/badge.svg)](https://github.com/cynthia2006/hanime-tv-plugin/actions/workflows/python-package.yml)
-[![PyPI version](https://badge.fury.io/py/hanime-tv-plugin.svg)](https://badge.fury.io/py/hanime-tv-plugin)
+[![Python package](https://github.com/cynthia2006/hanime-plugin/actions/workflows/python-package.yml/badge.svg)](https://github.com/cynthia2006/hanime-plugin/actions/workflows/python-package.yml)
+[![PyPI version](https://badge.fury.io/py/hanime-plugin.svg)](https://pypi.org/project/hanime-plugin/)
 
 ## Installation
 
