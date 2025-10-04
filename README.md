@@ -18,19 +18,22 @@ See [installing yt-dlp plugins](https://github.com/yt-dlp/yt-dlp#installing-plug
 
 Most of the websites support only downloading singular videos, not playlists; only, **hanime.tv** has playlist support as of this date.
 
+The following is table of sites and video resolutions offered that this plugin can download. **To request support for a site, please open a Github issue.**
+
 |                                                          | 720p               | 1080p                | 4K                   |
 | -------------------------------------------------------- | ------------------ | -------------------- | -------------------- |
 | hanime.tv                                                | :white_check_mark: | :x:*                 | :x:                  |
 | hstream.moe                                              | :white_check_mark: | :white_check_mark: † | :white_check_mark: † |
 | hentaihaven.co,<br/>hentaihaven.com,<br/>hentaihaven.xxx | :white_check_mark: | :white_check_mark:   | :x:                  |
+| hentaimama.io                                            | :white_check_mark: | :x:                  | :x:                  |
 | oppai.stream                                             | :white_check_mark: | :white_check_mark:   | :white_check_mark:‡  |
 
 
-\* Requires paid membership, something which is beyond the scope of this plugin.
+\* Requires paid membership; beyond the scope of this plugin.
 
 † [AV1](https://en.wikipedia.org/wiki/AV1) encodes. ‡ **VP9** encodes.
 
-Addtionally, **hstream.moe** suports direct 10-bit 1080p HEVC encodes from its website, but downloading files directly may be unreliable at times. However, it should notable (especially to videophiles), that although AV1 is superior to HEVC, the AV1 encodes provided by the website are idosyncratically encoded with 8-bit instead of 10-bit. The quality difference between the two may not be noticeable to the layperson, but those who seek perfection beaware.
+> **hstream.moe**'s AV1 encodes are 8-bit, whereas direct HEVC downloads are 10-bit. This information is useful to videophiles; normal users can ignore.
 
 ## Examples
 
