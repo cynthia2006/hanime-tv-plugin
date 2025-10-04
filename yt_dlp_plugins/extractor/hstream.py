@@ -8,7 +8,6 @@ from yt_dlp.extractor.common import InfoExtractor
 class HstreamIE(InfoExtractor):
     _VALID_URL = r'https?://hstream\.moe/hentai/(?P<id>[a-z0-9\-]+)'
     _E_ID = r'e_id" type="hidden" value="([^"]*)'
-    # TODO add _TESTS
 
     def _extract_cookie(self, name):
         for cookie in self._downloader.cookiejar:
@@ -20,7 +19,7 @@ class HstreamIE(InfoExtractor):
         video_id = self._match_id(url)
 
         page = self._download_webpage(url, video_id)
-        e_id = self._search_regex(self._E_ID, page, 'e_id')
+        e_id = self._search_regex(self._E_ID, page, 'episode id')
 
         payload = json.dumps({'episode_id': e_id})
         xsrf_token = self._extract_cookie('XSRF-TOKEN')
@@ -33,16 +32,15 @@ class HstreamIE(InfoExtractor):
                 }, data=payload.encode('utf-8'))
 
         # NOTE Although all CDNs essentially provide same resources, based on the client's
-        # country, the speeds may differ. Before finializing, the behaviour of the official
-        # website should be consulted, although this seems to suffice for now. 
+        # country, the speeds may differ.
         cdn_url = '{}/{}'.format(video['stream_domains'][0], video['stream_url'])
         formats = []
         
         for res in ('720', '1080', '2160'):
-            manifest_url = '{}/{}/manifest.mpd'.format(cdn_url, res)
-            mpd_formats = self._extract_mpd_formats(manifest_url, video_id, mpd_id=res)
+            results = self._extract_mpd_formats('{}/{}/manifest.mpd'.format(cdn_url, res),
+                                                video_id, mpd_id=res)
 
-            formats.extend(mpd_formats)
+            formats.extend(results)
 
         poster_url = '{}/{}'.format('https://hstream.moe', video.get('poster'))
         return {

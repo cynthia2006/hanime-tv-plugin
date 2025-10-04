@@ -90,12 +90,12 @@ class HanimeTVPlaylistIE(InfoExtractor):
                     '__count': 24
                 })
 
-            data = traverse_obj(page, ('fapi', 'data'), default=[], expected_type=list)
+            data = page['fapi']['data']
 
             return [self.url_result(
-                        urljoin('https://hanime.tv/videos/hentai/', entry.get('slug')),
-                        video_id=entry.get('id'),
-                        video_title=entry.get('name'),
+                        urljoin('https://hanime.tv/videos/hentai/', entry['slug']),
+                        video_id=entry['id'],
+                        video_title=entry['title'],
                         ie_key=HanimeTVIE.ie_key())
                     for entry in data]
 
