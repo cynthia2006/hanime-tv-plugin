@@ -48,6 +48,9 @@ class HentaiHavenIE(InfoExtractor):
             raise ExtractorError('Unable to extract JWPlayer data',
                                  video_id=video_id, ie=HentaiHavenIE.ie_key())
 
+        for src in hh_res['data']['sources']:
+            src['file'] = src.pop('src')
+
         result = self._parse_jwplayer_data(hh_res['data'], video_id, require_title=False)
         result['title'] = video_title
 

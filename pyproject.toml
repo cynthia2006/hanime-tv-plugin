@@ -1,6 +1,6 @@
 [project]
 name = "hanime-plugin"
-version = "2025.10.01"
+version = "2025.10.05"
 description = "hanime extractor plugin for yt-dlp"
 authors = [
   { name = "Cynthia", email = "cynthia2048@proton.me" }

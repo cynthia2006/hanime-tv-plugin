@@ -1,4 +1,5 @@
 from yt_dlp.extractor.common import InfoExtractor
+from yt_dlp.networking.common import Request
 
 class OppaiStreamIE(InfoExtractor):
     _VALID_URL = r'https://oppai\.stream/watch\?e=(?P<id>[\w-]+)'
@@ -9,8 +10,12 @@ class OppaiStreamIE(InfoExtractor):
     def _real_extract(self, url):
         video_id = self._match_id(url)
 
-        page = self._download_webpage(url, video_id)
+        page = self._download_webpage(Request(url,
+                                              extensions={'allow_redirects': False}),
+                                      video_id, expected_status=(200, 302))
+
         base_url, manifest = self._search_regex(self._MANIFEST_RE, page, 'manifest url', group=(1, 2))
+        
         title = self._html_search_regex(self._TITLE_RE, page, 'title')
         poster = self._search_regex(self._POSTER_RE, page, 'poster', default=None)
 
