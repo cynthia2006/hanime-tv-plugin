@@ -5,7 +5,7 @@ from yt_dlp.extractor.common import InfoExtractor, ExtractorError
 from yt_dlp.utils import multipart_encode
 
 class HentaiHavenIE(InfoExtractor):
-    _VALID_URL = r'https?://hentaihaven\.(co|com|xxx)/video/(?P<id>[\w\-_]+).*'
+    _VALID_URL = r'https?://hentaihaven\.com/video/(?P<id>[\w\-_]+).*'
     _VIDEO_TITLE_RE = r'chapter-heading" class="h3">([^<]+)'
     _HH_EMBED_RE = r'[^"]+/wp-content/plugins/player-logic/player\.php[^"]+'
     _CIPHER_MAP = dict(zip(b'NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm',
@@ -48,10 +48,14 @@ class HentaiHavenIE(InfoExtractor):
             raise ExtractorError('Unable to extract JWPlayer data',
                                  video_id=video_id, ie=HentaiHavenIE.ie_key())
 
-        for src in hh_res['data']['sources']:
+        data = hh_res['data']
+
+        # PATCH On the website HLS manifest is in the `src' property, but yt-dlp expects the
+        # property name to be `file' instead; rest is okay.
+        for src in data['sources']:
             src['file'] = src.pop('src')
 
-        result = self._parse_jwplayer_data(hh_res['data'], video_id, require_title=False)
+        result = self._parse_jwplayer_data(data, video_id, require_title=False)
         result['title'] = video_title
 
         return result
