@@ -1,41 +1,86 @@
-import urllib.parse
+import subprocess
 
 from yt_dlp.extractor.common import InfoExtractor
-from yt_dlp.networking import Request
-from yt_dlp.utils import (
-    traverse_obj,
-    str_or_none,
-    int_or_none,
-    url_or_none,
-    urljoin,
-    base_url,
-    OnDemandPagedList
-)
+from yt_dlp.utils import str_or_none, int_or_none
+# TODO Allow any runtime not just Deno.
+from yt_dlp.utils._jsruntime import DenoJsRuntime
+
 
 class HanimeTVIE(InfoExtractor):
-    _VALID_URL = r'https?://(?:www\.)?hanime\.tv/(videos/hentai|hentai/video)/(?P<id>[a-z0-9\-]+)(?:\?playlist_id=(?P<lid>[a-z]+))?'
+    _VALID_URL = r'https?://(?:www\.)?hanime\.tv/(videos/hentai|hentai/video)/(?P<id>[a-z0-9\-]+)'
+    _JS_PREAMBLE = '''
+    delete globalThis.process;
+
+    var window = new Proxy({
+        top: { location: { origin: "https://hanime.tv" } },
+        addEventListener: (e, cb) => {}
+    }, {
+        set(o, k, v) {
+            if (k == "ssignature" || k == "stime")
+                console.log(v);
+            
+            o[k] = v;
+            return true;
+        }
+    });
+
+    globalThis.window = window;
+    '''
+    
     # TODO add _TESTS
 
+    def __init__(self):
+        self._runtime = DenoJsRuntime()
+        self._script = None
+
+    def _cache_program(self, url, video_id):
+        self._script = self._JS_PREAMBLE
+        self._script += self._download_webpage(
+            url, video_id, headers={'Referer': 'https://hanime.tv/'})
+
+    def _generate_creds(self):
+        info = self._runtime.info
+        output = subprocess.run([info.path, 'run', '-'],
+            input=self._script, text=True, capture_output=True)
+
+        if output.returncode == 0:
+            return output.stdout.split('\n', 1)
+        else:
+            return None
+
     def _real_extract(self, url):
-        video_id, playlist_id = self._match_valid_url(url).group('id', 'lid')
+        slug = self._match_id(url)
 
-        # Delegate to playlist extractor if the user requested to download the entire playlist.
-        if self._yes_playlist(playlist_id, video_id):
-            return self.url_result(urljoin('https://hanime.tv/playlists/', playlist_id),
-                                   ie=HanimeTVPlaylistIE.ie_key())
+        page = self._download_webpage(url, slug)
+        title = self._search_regex(r'<h1 class="tv-title">([^<]+)', page, "title")
+        video_id = self._search_regex(rf'(\d+)\s*,\s*"{slug}"', page, "video id")
 
-        page = self._download_json('https://h.freeanimehentai.net/api/v8/video', video_id, query={'id': video_id})
+        # NOTE This script is unlikely to change, so better cache it.
+        if not self._script:
+            script_url = self._search_regex( 
+                r'<script.*src="(https://hanime-cdn\.com/js/vendor\.[^"]+)', page, "signature generator"
+            )
+            self._cache_program(script_url, slug)
+
+        ssignature, stime = self._generate_creds()
+        self.to_screen(f'Signature: {ssignature}')
+
+        manifest = self._download_json(
+            f'https://cached.freeanimehentai.net/api/v8/guest/videos/{video_id}/manifest',
+            slug, headers={
+                'Content-Type': 'application/json',
+                'Origin': 'https://hanime.tv',
+                'Referer': 'https://hanime.tv/',
+                'X-Signature': ssignature,
+                'X-Time': stime,
+                'X-signature-version': 'web2'
+            }
+        )
+
         formats = []
-
-        video = page['hentai_video']
-        servers = page['videos_manifest']['servers']
-
+        servers = manifest['videos_manifest']['servers']
         for server in servers:
             for stream in server['streams']:
-                # For now, premium streams can not be downloaded; neither is practical.
-                if not stream.get('is_guest_allowed'):
-                    continue
-
                 formats.append({
                     'url': stream['url'],
                     'ext': 'mp4',
@@ -46,57 +91,7 @@ class HanimeTVIE(InfoExtractor):
                 })
 
         return {
-            'id': video.get('slug'),
-            'title': video.get('name'),
-            'creator': video.get('brand'),
-            'duration': int_or_none(video.get('duration_in_ms'), scale=1000),
-            'timestamp': int_or_none(video.get('released_at_unix')),
-            'thumbnail': url_or_none(video.get('poster_url')),
-            'formats': formats,
-            'ext': 'mp4',
+            'id': slug,
+            'title': title,
+            'formats': formats
         }
-
-
-class HanimeTVPlaylistIE(InfoExtractor):
-    _VALID_URL = r"https?://(?:www\.)?hanime\.tv/playlists/(?P<id>[a-z0-9\-]+)"
-    # TODO add _TESTS
-
-    def _real_extract(self, url):
-        playlist_id = self._match_id(url)
-
-        # Official website does 24 hits/request; we do the same.
-        init_page = self._download_json('https://h.freeanimehentai.net/api/v8/playlist_hentai_videos', None, headers={
-                'X-Signature-Version': 'web2'
-            }, query={
-                'playlist_id': playlist_id,
-                '__order': 'sequence,DESC',
-                '__offset': 0,
-                '__count': 24,
-                # The additional information (including playlist title) is fetched only once.
-                'personalized': 1
-            })
-        playlist_name = traverse_obj(init_page, ('playlist', 'title'), expected_type=str)
-
-        def fetch_page(pagenum):
-            # Re-use the cached page.
-            page = init_page if pagenum == 0 else self._download_json(
-                'https://h.freeanimehentai.net/api/v8/playlist_hentai_videos', None,
-                headers={
-                    'X-Signature-Version': 'web2'
-                }, query={
-                    'playlist_id': playlist_id,
-                    '__order': 'sequence,DESC',
-                    '__offset': pagenum*24,
-                    '__count': 24
-                })
-
-            data = page['fapi']['data']
-
-            return [self.url_result(
-                        urljoin('https://hanime.tv/videos/hentai/', entry['slug']),
-                        video_id=entry['id'],
-                        video_title=entry['title'],
-                        ie_key=HanimeTVIE.ie_key())
-                    for entry in data]
-
-        return self.playlist_result(OnDemandPagedList(fetch_page, 24), playlist_name)
