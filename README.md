@@ -27,6 +27,8 @@ The following is table of sites — ordered by overall subjective UX of site —
 | ohentai.org                                            | :white_check_mark: | :x:                  | :x:                  |
 | hentaimama.io                                          | :white_check_mark: | :x:                  | :x:                  |
 
+>[!IMPORTANT]
+> **hanime.tv** requires a JS runtime; currently only [Deno](https://deno.land) is supported, so install that, ensuring it's in PATH, otherwise this plugin won't work.
 
 \* Requires paid membership; beyond the scope of this plugin.
 
@@ -46,18 +48,6 @@ or
 
 ```
 $ yt-dlp -f - https://hentaihaven.com/video/soshite-watashi-wa-sensei-ni/episode-1
-```
-
-### Downloading a whole playlist
-
-Only **hanime.tv** has playlists; others don't, and videos must be downloaded separately as of now.
-
-```
-$ yt-dlp https://hanime.tv/playlists/bjjsczgesrlcylidtrjr
-```
-or
-```
-$ yt-dlp https://hanime.tv/videos/hentai/fuzzy-lips-2?playlist_id=bjjsczgesrlcylidtrjr
 ```
 
 ## FAQ
