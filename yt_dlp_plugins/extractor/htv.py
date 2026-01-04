@@ -35,8 +35,8 @@ class HanimeTVIE(InfoExtractor):
 
     def _cache_program(self, url, video_id):
         self._script = self._JS_PREAMBLE
-        self._script += self._download_webpage(
-            url, video_id, headers={'Referer': 'https://hanime.tv/'})
+        self._script += self._download_webpage(url, video_id,
+            headers={'Referer': 'https://hanime.tv/'}, note='Caching generator script')
 
     def _generate_creds(self):
         info = self._runtime.info
@@ -68,12 +68,12 @@ class HanimeTVIE(InfoExtractor):
         manifest = self._download_json(
             f'https://cached.freeanimehentai.net/api/v8/guest/videos/{video_id}/manifest',
             slug, headers={
-                'Content-Type': 'application/json',
+                'Accept': 'application/json',
                 'Origin': 'https://hanime.tv',
                 'Referer': 'https://hanime.tv/',
                 'X-Signature': ssignature,
                 'X-Time': stime,
-                'X-signature-version': 'web2'
+                'X-Signature-Version': 'web2'
             }
         )
 
