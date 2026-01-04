@@ -1,6 +1,10 @@
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
 [project]
 name = "hanime-plugin"
-version = "2025.10.05"
+version = "2026.01.04"
 description = "hanime extractor plugin for yt-dlp"
 authors = [
   { name = "Cynthia", email = "cynthia2048@proton.me" }
@@ -8,9 +12,5 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.9"
 
-[tool.poetry]
-packages = [{ include = "yt_dlp_plugins" }]
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[tool.flit.module]
+name = "yt_dlp_plugins"
