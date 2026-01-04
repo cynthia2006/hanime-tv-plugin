@@ -18,14 +18,14 @@ See [installing yt-dlp plugins](https://github.com/yt-dlp/yt-dlp#installing-plug
 
 The following is table of sites — ordered by overall subjective UX of site — and video resolutions each site offer. **To request support for a site, please open a Github issue.**
 
-|                                                        | 720p               | 1080p                | 4K                   |
-| ------------------------------------------------------ | ------------------ | -------------------- | -------------------- |
-| hstream.moe                                            | :white_check_mark: | :white_check_mark: † | :white_check_mark: † |
-| oppai.stream                                           | :white_check_mark: | :white_check_mark: ‡ | :white_check_mark: ‡ |
-| hentaihaven.co<br/>hentaihaven.com<br/>hentaihaven.xxx | :white_check_mark: | :white_check_mark:   | :x:                  |
-| hanime.tv                                              | :white_check_mark: | :x:*                 | :x:                  |
-| ohentai.org                                            | :white_check_mark: | :x:                  | :x:                  |
-| hentaimama.io                                          | :white_check_mark: | :x:                  | :x:                  |
+|                  | 720p               | 1080p                | 4K                   |
+| ---------------- | ------------------ | -------------------- | -------------------- |
+| hstream.moe      | :white_check_mark: | :white_check_mark: † | :white_check_mark: † |
+| oppai.stream     | :white_check_mark: | :white_check_mark: ‡ | :white_check_mark: ‡ |
+| hentaihaven.com  | :white_check_mark: | :white_check_mark:   | :x:                  |
+| hanime.tv        | :white_check_mark: | :x:*                 | :x:                  |
+| ohentai.org      | :white_check_mark: | :x:                  | :x:                  |
+| hentaimama.io    | :white_check_mark: | :x:                  | :x:                  |
 
 >[!IMPORTANT]
 > **hanime.tv** requires a JS runtime; currently only [Deno](https://deno.land) is supported, so install that, ensuring it's in PATH, otherwise this plugin won't work.
