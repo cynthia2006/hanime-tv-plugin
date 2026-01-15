@@ -14,12 +14,10 @@ pip install --user hanime-plugin
 
 See [installing yt-dlp plugins](https://github.com/yt-dlp/yt-dlp#installing-plugins) for the other methods this plugin package can be installed.
 
-### pipx
-
-Had you installed yt-dlp using **pipx**, you should inject this plugin.
+### uv
 
 ```
-pipx inject yt-dlp hanime-plugin
+uv tool install --with hanime-plugin yt-dlp
 ```
 
 ## Support
